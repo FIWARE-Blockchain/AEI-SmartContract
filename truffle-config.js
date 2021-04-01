@@ -48,6 +48,14 @@ module.exports = {
      network_id: "*",       // Any network (default: none)
     },
 
+    qourum: {
+      host: '46.17.108.87',
+      port: 8545, 
+      network_id: "*",
+      gasPrice: 0,
+      gas: 4500000
+    },
+
     // Another network with more advanced options...
     // advanced: {
       // port: 8777,             // Custom port

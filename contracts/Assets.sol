@@ -6,25 +6,53 @@ import "@openzeppelin/contracts/ownership/Ownable.sol";
 contract Assets is ERC721Full, Ownable{
     constructor() ERC721Full('NGSIASSET', 'NGA') public {}
   
-    struct Asset {
+  struct Asset {
         address owner;
-        string ddoHash;
+        bytes32 _hash;
+        Relationships[] relation;
     }
 
-    mapping (bytes32 => Asset) private didToHash;
-    event AssetCreated (address owner, bytes32 uuid, uint timestamp, string filehash);
+    struct Relationships {
+        address _owner;
+        bytes32 _hash;
+    }
 
-    function createAsset(bytes32 uuid, string memory _newHash) public {
-        bytes memory emptyTest = bytes(didToHash[uuid].ddoHash); 
-        if (emptyTest.length != 0 && didToHash[uuid].owner != msg.sender) {
-            revert("Asset creation failed. Invalid user.");
+    mapping (bytes32 => Asset) private payloadHash;
+    
+    event AssetCreated (address owner, bytes32 uuid, uint timestamp, bytes32 filehash);
+    event RelationAdded (address owner, bytes32 uuid, uint timestamp,bytes32 metadatahash);
+
+
+    function createAsset(bytes32 uuid, bytes32 _newHash) public returns (bytes32) {
+        if(payloadHash[uuid].owner == msg.sender) {
+            revert("Asset exists");
         }
-
-        didToHash[uuid] = Asset(msg.sender, _newHash);
+        payloadHash[uuid].owner = msg.sender;
+        payloadHash[uuid]._hash = _newHash;
         emit AssetCreated(msg.sender, uuid, block.timestamp, _newHash);
     }
 
-    function getAsset(bytes32 uuid) public view returns (string memory) {
-        return didToHash[uuid].ddoHash;
+    function getAsset(bytes32 uuid) public view returns (bytes32) {
+        return payloadHash[uuid]._hash;
+    }
+    
+        function addRelation(bytes32 uuid, bytes32 _metadatahash) public {
+        //check either uuid exist or not
+        Relationships memory rel = Relationships(msg.sender, _metadatahash);
+        payloadHash[uuid].relation.push(rel);
+        emit RelationAdded(msg.sender, uuid, block.timestamp, _metadatahash);
+    }
+    
+    function getRelations(bytes32 uuid) public view returns (address[] memory, bytes32[] memory) {
+        address[] memory adds = new address[](payloadHash[uuid].relation.length);
+        bytes32[] memory metadataHash = new bytes32[](payloadHash[uuid].relation.length);
+        
+        for(uint i=0; i<payloadHash[uuid].relation.length; i++) {
+            Relationships storage relation = payloadHash[uuid].relation[i];
+            adds[i] = relation._owner;
+            metadataHash[i] = relation._hash;
+            
+        }
+        return (adds, metadataHash);
     }
 }

@@ -1,6 +1,6 @@
 {
   "name": "aei-contract",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "AEI Contract",
   "engines": {
     "node": "10.x"

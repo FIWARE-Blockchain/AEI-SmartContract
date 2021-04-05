@@ -3,23 +3,23 @@
   "version": "0.0.1",
   "description": "AEI Contract",
   "engines": {
-		"node": "10.x"
-	},
+    "node": "10.x"
+  },
   "repository": {
-		"type": "git",
-		"url": "git+https://github.com/FIWARE-Blockchain/AEI-SmartContract.git"
-	  },
+    "type": "git",
+    "url": "git+https://github.com/FIWARE-Blockchain/AEI-SmartContract.git"
+  },
   "keywords": [
-      "npm",
-      "node",
-      "javascript",
-      "iota",
-      "fiware",
-      "contract",
-      "AEI Contract",
-      "merkle tree",
-      "ipfs"
-    ],
+    "npm",
+    "node",
+    "javascript",
+    "iota",
+    "fiware",
+    "contract",
+    "AEI Contract",
+    "merkle tree",
+    "ipfs"
+  ],
   "dependencies": {
     "@iota/converter": "^1.0.0-beta.30",
     "@iota/mam": "^0.7.3",
@@ -35,18 +35,20 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
-    "babel-watch": "^2.0.7"
+    "babel-watch": "^2.0.7",
+    "mocha": "^8.2.1",
+    "chai": "^4.3.4"
   },
   "scripts": {
     "postinstall": "rm -rf dist && mkdir dist && npx babel src --out-dir dist",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --require babel-core/register --require babel-polyfill --recursive --exit",
     "build": "npm run postinstall",
     "demo": "babel-watch src/main.js"
   },
   "author": "Har Preet Singh <harpreet.singh@fiware.org>",
   "license": "MIT",
   "bugs": {
-		"url": "https://github.com/FIWARE-Blockchain/AEI-SmartContract/issues"
-	  },
-	"homepage": "https://github.com/FIWARE-Blockchain/AEI-SmartContract#readme"
+    "url": "https://github.com/FIWARE-Blockchain/AEI-SmartContract/issues"
+  },
+  "homepage": "https://github.com/FIWARE-Blockchain/AEI-SmartContract#readme"
 }

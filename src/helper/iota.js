@@ -6,6 +6,7 @@ let mamState = Mam.init(IOTAConfig.host);
 
 const publishToIOTA = (payload) => {
     return new Promise((resolve, reject) => {
+        Mam.changeMode(mamState, IOTAConfig.mode);
         const trytes = asciiToTrytes(JSON.stringify(payload));
         const message = Mam.create(mamState, trytes);
         mamState = message.state;

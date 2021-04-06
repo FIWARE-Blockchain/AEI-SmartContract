@@ -6,27 +6,30 @@ import { getMerkelRoot } from '../helper/merkle';
 import { uploadToIPFS } from '../helper/ipfs';
 import { publishToIOTA } from '../helper/iota';
 
-Contract.setProvider(config.rpcEndpoint);
-const contract = new Contract(AssetArtifact.abi, config.contractAddress);
 
 const createAsset = (uuid, payload, address, callback) => {
+    Contract.setProvider(config.getServiceConfig().rpcEndpoint);
+    const contract = new Contract(AssetArtifact.abi, config.getServiceConfig().contractAddress);
     return Promise.resolve().then(() => {
-        if (config.storageMode == config.storageType.IPFS) {
+        if (config.getServiceConfig().storageMode == config.storageType.IPFS) {
+            console.log('here');
             return uploadToIPFS(payload);
         }
-        else if (config.storageMode == config.storageType.IOTA) {
+        else if (config.getServiceConfig().storageMode == config.storageType.IOTA) {
+            console.log('here 1');
             return publishToIOTA(payload);
         } else {
+            console.log('here 2');
             return getMerkelRoot(payload);
         }
     }).then((value) => {
         let uuidToByte32 = Web3.utils.fromAscii(uuid);
         return contract.methods.createAsset(uuidToByte32, value).send({
             from: address,
-            gas: config.gasLimit
+            gas: config.getServiceConfig().gasLimit
         });
     }).then((res) => {
-        callback({ TxRecipt: res, StorageType: config.storageMode });
+        callback({ TxRecipt: res, StorageType: config.getServiceConfig().storageMode });
     })
         .catch((err) => {
             callback(err);
@@ -34,6 +37,8 @@ const createAsset = (uuid, payload, address, callback) => {
 };
 
 const getAsset = (uuid, callback) => {
+    Contract.setProvider(config.getServiceConfig().rpcEndpoint);
+    const contract = new Contract(AssetArtifact.abi, config.getServiceConfig().contractAddress);
     let uuidToByte32 = Web3.utils.fromAscii(uuid);
     contract.methods.getAsset(uuidToByte32).call().then((response) => {
         callback(response);
@@ -43,11 +48,13 @@ const getAsset = (uuid, callback) => {
 };
 
 const updateAsset = (uuid, payload, address, callback) => {
+    Contract.setProvider(config.getServiceConfig().rpcEndpoint);
+    const contract = new Contract(AssetArtifact.abi, config.getServiceConfig().contractAddress);
     return Promise.resolve().then(() => {
-        if (config.storageMode == config.storageType.IPFS) {
+        if (config.getServiceConfig().storageMode == config.storageType.IPFS) {
             return uploadToIPFS(payload);
         }
-        else if (config.storageMode == config.storageType.IOTA) {
+        else if (config.getServiceConfig().storageMode == config.storageType.IOTA) {
             return publishToIOTA(payload);
         } else {
             return getMerkelRoot(payload);
@@ -56,10 +63,10 @@ const updateAsset = (uuid, payload, address, callback) => {
         let uuidToByte32 = Web3.utils.fromAscii(uuid);
         return contract.methods.updateAsset(uuidToByte32, value).send({
             from: address,
-            gas: config.gasLimit
+            gas: config.getServiceConfig().gasLimit
         });
     }).then((res) => {
-        callback({ TxRecipt: res, StorageType: config.storageMode });
+        callback({ TxRecipt: res, StorageType: config.getServiceConfig().storageMode });
     })
         .catch((err) => {
             callback(err);
@@ -67,6 +74,8 @@ const updateAsset = (uuid, payload, address, callback) => {
 };
 
 const removeAsset = (uuid, address, callback) => {
+    Contract.setProvider(config.getServiceConfig().rpcEndpoint);
+    const contract = new Contract(AssetArtifact.abi, config.getServiceConfig().contractAddress);
     var uuidToByte32 = Web3.utils.fromAscii(uuid);
     contract.methods.removeAsset(uuidToByte32).send({
         from: address
@@ -78,11 +87,13 @@ const removeAsset = (uuid, address, callback) => {
 };
 
 const addMetaData = (uuid, metadataPayload, address, callback) => {
+    Contract.setProvider(config.getServiceConfig().rpcEndpoint);
+    const contract = new Contract(AssetArtifact.abi, config.getServiceConfig().contractAddress);
     return Promise.resolve().then(() => {
-        if (config.storageMode == config.storageType.IPFS) {
+        if (config.getServiceConfig().storageMode == config.storageType.IPFS) {
             return uploadToIPFS(metadataPayload);
         }
-        else if (config.storageMode == config.storageType.IOTA) {
+        else if (config.getServiceConfig().storageMode == config.storageType.IOTA) {
             return publishToIOTA(metadataPayload);
         } else {
             return getMerkelRoot(metadataPayload);
@@ -91,10 +102,10 @@ const addMetaData = (uuid, metadataPayload, address, callback) => {
         let uuidToByte32 = Web3.utils.fromAscii(uuid);
         return contract.methods.addMetadata(uuidToByte32, value).send({
             from: address,
-            gas: config.gasLimit
+            gas: config.getServiceConfig().gasLimit
         });
     }).then((res) => {
-        callback({ TxRecipt: res, StorageType: config.storageMode });
+        callback({ TxRecipt: res, StorageType: config.getServiceConfig().storageMode });
     })
         .catch((err) => {
             callback(err);
@@ -103,6 +114,8 @@ const addMetaData = (uuid, metadataPayload, address, callback) => {
 
 
 const getMetaData = (uuid, callback) => {
+    Contract.setProvider(config.getServiceConfig().rpcEndpoint);
+    const contract = new Contract(AssetArtifact.abi, config.getServiceConfig().contractAddress);
     var uuidToByte32 = Web3.utils.fromAscii(uuid);
     contract.methods.getMetadatas(uuidToByte32).call().then((res) => {
         callback(res);
@@ -110,6 +123,8 @@ const getMetaData = (uuid, callback) => {
 };
 
 const remoteMetaData = (uuid, index, address, callback) => {
+    Contract.setProvider(config.getServiceConfig().rpcEndpoint);
+    const contract = new Contract(AssetArtifact.abi, config.getServiceConfig().contractAddress);
     var uuidToByte32 = Web3.utils.fromAscii(uuid);
     contract.methods.removeMetadata(uuidToByte32, index).send({
         from: address
@@ -121,11 +136,13 @@ const remoteMetaData = (uuid, index, address, callback) => {
 };
 
 const addRelation = (uuid, relationPayload, callback) => {
+    Contract.setProvider(config.getServiceConfig().rpcEndpoint);
+    const contract = new Contract(AssetArtifact.abi, config.getServiceConfig().contractAddress);
     return Promise.resolve().then(() => {
-        if (config.storageMode == config.storageType.IPFS) {
+        if (config.getServiceConfig().storageMode == config.storageType.IPFS) {
             return uploadToIPFS(relationPayload);
         }
-        else if (config.storageMode == config.storageType.IOTA) {
+        else if (config.getServiceConfig().storageMode == config.storageType.IOTA) {
             return publishToIOTA(relationPayload);
         } else {
             return getMerkelRoot(relationPayload);
@@ -134,10 +151,10 @@ const addRelation = (uuid, relationPayload, callback) => {
         let uuidToByte32 = Web3.utils.fromAscii(uuid);
         return contract.methods.addRelation(uuidToByte32, value).send({
             from: address,
-            gas: config.gasLimit
+            gas: config.getServiceConfig().gasLimit
         });
     }).then((res) => {
-        callback({ TxRecipt: res, StorageType: config.storageMode });
+        callback({ TxRecipt: res, StorageType: config.getServiceConfig().storageMode });
     })
         .catch((err) => {
             callback(err);
@@ -145,6 +162,8 @@ const addRelation = (uuid, relationPayload, callback) => {
 };
 
 const getRelations = (uuid, callback) => {
+    Contract.setProvider(config.getServiceConfig().rpcEndpoint);
+    const contract = new Contract(AssetArtifact.abi, config.getServiceConfig().contractAddress);
     var uuidToByte32 = Web3.utils.fromAscii(uuid);
     contract.methods.getRelations(uuidToByte32).call().then((res) => {
         callback(res);
@@ -152,6 +171,8 @@ const getRelations = (uuid, callback) => {
 };
 
 const removeRelation = (uuid, index, address, callback) => {
+    Contract.setProvider(config.getServiceConfig().rpcEndpoint);
+    const contract = new Contract(AssetArtifact.abi, config.getServiceConfig().contractAddress);
     var uuidToByte32 = Web3.utils.fromAscii(uuid);
     contract.methods.removeRelation(uuidToByte32, index).send({
         from: address

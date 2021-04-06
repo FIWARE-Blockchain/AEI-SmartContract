@@ -15,17 +15,17 @@ var _crypto = require('./crypto');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const ipfs = new _ipfsApi2.default(_config.ipfsConfig.network);
+const ipfs = new _ipfsApi2.default((0, _config.getIPFSConfig)());
 
 const uploadToIPFS = payload => {
     return new Promise((resolve, reject) => {
         let data;
-        if (_config.encrpytionMode) {
+        if ((0, _config.getServiceConfig)().encrpytionMode) {
             data = (0, _crypto.encrypt)(JSON.stringify(payload));
         } else {
             data = payload;
         }
-        ipfs.dag.put(data, _config.ipfsConfig.dagOptions).then(cid => {
+        ipfs.dag.put(data, (0, _config.getIPFSConfig)().dagOptions).then(cid => {
             resolve(cid.toString());
         }).catch(err => {
             reject(err);
@@ -37,7 +37,7 @@ const getFromIPFS = cid => {
     return new Promise((resolve, reject) => {
         let data;
         ipfs.dag.get(cid).then(res => {
-            if (_config.encrpytionMode) {
+            if ((0, _config.getServiceConfig)().encrpytionMode) {
                 data = JSON.parse((0, _crypto.decrypt)(res.value));
             } else {
                 data = JSON.parse(res.value);

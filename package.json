@@ -1,7 +1,8 @@
 {
   "name": "aei-contract",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "AEI Contract",
+  "main": "./dist/index.js",
   "engines": {
     "node": "10.x"
   },
@@ -43,7 +44,7 @@
     "postinstall": "rm -rf dist && mkdir dist && npx babel src --out-dir dist",
     "test": "mocha --require babel-core/register --require babel-polyfill --recursive --exit",
     "build": "npm run postinstall",
-    "demo": "babel-watch src/main.js"
+    "demo": "babel-watch src/index.js"
   },
   "author": "Har Preet Singh <harpreet.singh@fiware.org>",
   "license": "MIT",

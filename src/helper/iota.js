@@ -1,12 +1,12 @@
 import Mam from '@iota/mam';
 import { asciiToTrytes, trytesToAscii } from '@iota/converter';
-import { IOTAConfig } from '../config';
-let mamState = Mam.init(IOTAConfig.host);
+import { getIOTAMaMConfig } from '../config';
+let mamState = Mam.init(getIOTAMaMConfig().host);
 
 
 const publishToIOTA = (payload) => {
     return new Promise((resolve, reject) => {
-        Mam.changeMode(mamState, IOTAConfig.mode);
+        Mam.changeMode(mamState, getIOTAMaMConfig().mode);
         const trytes = asciiToTrytes(JSON.stringify(payload));
         const message = Mam.create(mamState, trytes);
         mamState = message.state;
@@ -21,7 +21,7 @@ const publishToIOTA = (payload) => {
 
 const getFromIOTA = (root) => {
     return new Promise((resolve, reject) => {
-        Mam.fetch(root, IOTAConfig.mode).then((res) => {
+        Mam.fetch(root, getIOTAMaMConfig().mode).then((res) => {
             res.messages.forEach(message => {
                 resolve(JSON.parse(trytesToAscii(message)));
             });

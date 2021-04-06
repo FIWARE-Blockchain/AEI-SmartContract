@@ -15,11 +15,11 @@ var _config = require('../config');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-let mamState = _mam2.default.init(_config.IOTAConfig.host);
+let mamState = _mam2.default.init((0, _config.getIOTAMaMConfig)().host);
 
 const publishToIOTA = payload => {
     return new Promise((resolve, reject) => {
-        _mam2.default.changeMode(mamState, _config.IOTAConfig.mode);
+        _mam2.default.changeMode(mamState, (0, _config.getIOTAMaMConfig)().mode);
         const trytes = (0, _converter.asciiToTrytes)(JSON.stringify(payload));
         const message = _mam2.default.create(mamState, trytes);
         mamState = message.state;
@@ -34,7 +34,7 @@ const publishToIOTA = payload => {
 
 const getFromIOTA = root => {
     return new Promise((resolve, reject) => {
-        _mam2.default.fetch(root, _config.IOTAConfig.mode).then(res => {
+        _mam2.default.fetch(root, (0, _config.getIOTAMaMConfig)().mode).then(res => {
             res.messages.forEach(message => {
                 resolve(JSON.parse((0, _converter.trytesToAscii)(message)));
             });
